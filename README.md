@@ -85,8 +85,34 @@ wails3 task android:package        # arm64-only release APK
 wails3 task android:bundle         # .aab for Google Play
 ```
 
-`build/android/Taskfile.yml` is patched so these tasks run on a Windows host: NDK path normalisation, the Windows clang target, `gradlew.bat`, and forwarding `PRODUCTION` to the Go build. The Android activity routes system Back to the game through `OnBackPressedDispatcher`, because Android 16 no longer calls `onBackPressed()` for apps targeting SDK 36. iOS builds need a Mac with Xcode. Libraries for other ABIs stay in `build/android/app/src/main/jniLibs/` between builds. Delete `jniLibs/x86_64` before `android:package` so the arm64 APK doesn't pick up a stale x86_64 `.so`. `android:run` and `android:deploy-device` default `ARCH` to the host (amd64 on Windows), so pass `ARCH=arm64` for a real phone.
+`build/android/Taskfile.yml` is patched so these tasks run on a Windows host: NDK path normalisation, the Windows clang target, `gradlew.bat`, and forwarding `PRODUCTION` to the Go build. The Android activity routes system Back to the game through `OnBackPressedDispatcher`, because Android 16 no longer calls `onBackPressed()` for apps targeting SDK 36. Libraries for other ABIs stay in `build/android/app/src/main/jniLibs/` between builds. Delete `jniLibs/x86_64` before `android:package` so the arm64 APK doesn't pick up a stale x86_64 `.so`. `android:run` and `android:deploy-device` default `ARCH` to the host (amd64 on Windows), so pass `ARCH=arm64` for a real phone.
 
 Each device generates the daily orbit itself. The generator avoids FMA, but `math.Cos`/`math.Sin` may differ by one ulp between amd64 and arm64, so on rare days a phone and a desktop could get slightly different charts.
 
 **Signing:** release APKs are signed with the Android debug key unless `ANDROID_KEYSTORE_FILE`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` and `ANDROID_KEY_PASSWORD` are set. That's fine for sideloading, but Google Play rejects it. The application id is `com.perihelion.game`.
+
+### macOS and iOS
+
+These need a Mac with Xcode.
+
+```bash
+wails3 task darwin:package             # bin/perihelion.app, arm64, ad-hoc signed
+wails3 task darwin:package:universal   # same, arm64 + amd64
+wails3 task darwin:package:dmg         # bin/perihelion.dmg installer
+wails3 task ios:package                # bin/perihelion.app for the iOS Simulator (iOS 15+)
+wails3 task ios:deploy-simulator       # package, install and launch on the booted simulator
+```
+
+Both packages are written to `bin/perihelion.app`, so move one aside before building the other platform.
+
+The macOS icons (`build/darwin/icons.icns` and `Assets.car`) are compiled from `build/appicon.icon`. Its only layer is a full-bleed copy of `build/appicon.png`, the same artwork as the Windows and Android icons. After changing `appicon.png`, refresh that layer, then rebuild the icons. The icon task also rewrites `build/windows/icon.ico`.
+
+```bash
+magick \( build/appicon.png -resize 135% -gravity center -extent 1024x1024 -blur 0x24 -background black -alpha remove \) \
+  build/appicon.png -gravity center -composite -alpha off build/appicon.icon/Assets/appicon.png
+wails3 task common:generate:icons
+```
+
+`build/ios/xcode/` is regenerated from `build/config.yml` and `build/appicon.png` on every iOS build and isn't committed.
+
+A real iPhone needs real signing and a provisioning profile: `wails3 task ios:package:ipa IOS_PLATFORM=device CODESIGN_IDENTITY="Apple Development: …" PROVISIONING_PROFILE=path/to/profile.mobileprovision`, or `wails3 task ios:xcode` to let Xcode manage signing.
