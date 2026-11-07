@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bg" cx="0.42" cy="0.38" r="0.85">
+      <stop offset="0" stop-color="#17406F"/>
+      <stop offset="0.6" stop-color="#0E2A4F"/>
+      <stop offset="1" stop-color="#081A33"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FFF1D2"/>
+      <stop offset="0.3" stop-color="#FFB547" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#FFB547" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="planet"><circle cx="300" cy="292" r="92"/></clipPath>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <g fill="none" stroke="#E8E4D3">
+    <ellipse cx="236" cy="272" rx="190" ry="118" transform="rotate(-24 236 272)" stroke-opacity="0.55" stroke-width="5" stroke-dasharray="3 14" stroke-linecap="round"/>
+    <circle cx="300" cy="292" r="92" fill="#123660" stroke-width="7"/>
+  </g>
+  <g clip-path="url(#planet)" stroke="#E8E4D3" stroke-opacity="0.55" stroke-width="4">
+    <path d="M300 200 L420 320 M282 210 L420 348 M262 218 L420 376 M244 228 L410 394 M228 240 L392 404 M216 256 L370 410 M210 278 L340 408"/>
+  </g>
+  <circle cx="300" cy="292" r="92" fill="none" stroke="#E8E4D3" stroke-width="7"/>
+  <path d="M130 196 Q168 150 222 152" fill="none" stroke="#FFB547" stroke-width="10" stroke-linecap="round" stroke-opacity="0.45"/>
+  <circle cx="226" cy="152" r="54" fill="url(#glow)"/>
+  <circle cx="226" cy="152" r="15" fill="#FFF1D2"/>
+</svg>

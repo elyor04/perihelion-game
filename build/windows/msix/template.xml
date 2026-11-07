@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MsixPackagingToolTemplate
+    xmlns="http://schemas.microsoft.com/msix/packaging/msixpackagingtool/template/2022">
+    <Settings
+        AllowTelemetry="false"
+        ApplyACLsToPackageFiles="true"
+        GenerateCommandLineFile="true"
+        AllowPromptForPassword="false">
+    </Settings>
+    <Installer
+        Path="perihelion.exe"
+        Arguments=""
+        InstallLocation="C:\Program Files\Perihelion\Perihelion">
+    </Installer>
+    <PackageInformation
+        PackageName="Perihelion"
+        PackageDisplayName="Perihelion"
+        PublisherName="CN=Perihelion"
+        PublisherDisplayName="Perihelion"
+        Version="0.1.0.0"
+        PackageDescription="A one-touch gravity puzzle">
+        <Capabilities>
+            <Capability Name="runFullTrust" />
+            
+        </Capabilities>
+        <Applications>
+            <Application
+                Id="com.perihelion.game"
+                Description="A one-touch gravity puzzle"
+                DisplayName="Perihelion"
+                ExecutableName="perihelion.exe"
+                EntryPoint="Windows.FullTrustApplication">
+                
+            </Application>
+        </Applications>
+        <Resources>
+            <Resource Language="en-us" />
+        </Resources>
+        <Dependencies>
+            <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+        </Dependencies>
+        <Properties>
+            <Framework>false</Framework>
+            <DisplayName>Perihelion</DisplayName>
+            <PublisherDisplayName>Perihelion</PublisherDisplayName>
+            <Description>A one-touch gravity puzzle</Description>
+            <Logo>Assets\AppIcon.png</Logo>
+        </Properties>
+    </PackageInformation>
+    <SaveLocation PackagePath="perihelion.msix" />
+    <PackageIntegrity>
+        <CertificatePath></CertificatePath>
+    </PackageIntegrity>
+</MsixPackagingToolTemplate>

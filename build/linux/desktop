@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=Perihelion
+Comment=A one-touch gravity puzzle: slingshot a comet through a field of worlds.
+# The Exec line includes %u to pass the URL to the application
+Exec=/usr/local/bin/perihelion %u
+Terminal=false
+Type=Application
+Icon=perihelion
+Categories=Utility;
+StartupWMClass=perihelion
+
+ 
