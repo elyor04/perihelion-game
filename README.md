@@ -12,7 +12,7 @@ Pull back to aim, let go, and the comet flies through a field of worlds. Planets
 - **One deterministic flight model in two languages.** It is a semi-implicit Euler integrator with a fixed 1/120 s step, using only `+ − × ÷ √`. The Go version wraps every product in `float64()` so arm64 can't fuse it into an FMA. `npm run check:physics` replays 185 recorded Go flights in TypeScript and checks that they match bit for bit.
 - **Aim guide for the first quarter of the path only** (half with the "Longer aim guide" setting). The full trail of your last launch stays on the chart as a dashed ghost, so you can correct on the next try.
 - **The look: a cyanotype star chart.** The chart is drawn in Prussian blue and chalk, with hatched planets and isolines. The graticule and the starfield bend around every mass (gravitational lensing), and black holes show an event horizon and a photon ring. The amber comet has a particle tail and an orbit trail, and time slows on near misses.
-- **Procedural audio.** WebAudio synthesises every sound: drone, bells, launch, flight hum, impacts and the gate chord. No audio files ship with the game.
+- **Procedural audio.** WebAudio synthesises every sound: bells, launch, flight hum, impacts and the gate chord. No audio files ship with the game.
 - **Haptics and keep-awake on mobile** through `application.Mobile`. Screen shake and reduced motion are settings, and the default follows the OS.
 - **Three languages.** The game ships in English, Russian and Uzbek (Latin script, with proper ʻ U+02BB and ʼ U+02BC). It follows the device language on first launch. You can switch with EN/RU/UZ on the title screen or in Settings, and the choice is saved in the Go profile.
 

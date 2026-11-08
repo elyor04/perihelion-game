@@ -1,6 +1,7 @@
 // Every sound is synthesised with WebAudio; no audio files ship with the game.
-// The ambient bed is a slow drone with sparse bell notes from a pentatonic
-// scale; effects are short envelopes on oscillators and filtered noise.
+// The background music is sparse bell notes from a pentatonic scale (there is
+// no continuous drone); effects are short envelopes on oscillators and
+// filtered noise.
 
 export type Sfx =
   | "ui" | "uiBack" | "launch" | "crash" | "rock" | "horizon" | "lost" | "warp"
@@ -16,7 +17,7 @@ export class AudioEngine {
   private echo: DelayNode | null = null;
   private noise: AudioBuffer | null = null;
   private hum: { osc: OscillatorNode; gain: GainNode; filter: BiquadFilterNode } | null = null;
-  private droneStarted = false;
+  private musicStarted = false;
   private bellTimer = 0;
   private lastTick = 0;
   private vol = { master: 0.8, music: 0.5, sfx: 0.8 };
@@ -34,7 +35,7 @@ export class AudioEngine {
       this.build();
     }
     this.resume();
-    this.startDrone();
+    this.startMusic();
   }
 
   /** iOS reports "interrupted" after a call or Siri; anything but running/closed needs a resume. */
@@ -70,7 +71,7 @@ export class AudioEngine {
     this.music.connect(this.master);
     this.sfx = c.createGain();
     this.sfx.connect(this.master);
-    // A feedback delay gives bells and the drone some space.
+    // A feedback delay gives the bells some space.
     this.echo = c.createDelay(1.5);
     this.echo.delayTime.value = 0.42;
     const fb = c.createGain();
@@ -89,51 +90,10 @@ export class AudioEngine {
     this.setVolumes(this.vol.master, this.vol.music, this.vol.sfx);
   }
 
-  private startDrone() {
-    const c = this.ctx;
-    if (!c || this.droneStarted || !this.music) return;
-    this.droneStarted = true;
-    const bus = c.createGain();
-    bus.gain.value = 0;
-    bus.gain.setTargetAtTime(0.5, c.currentTime, 3);
-    bus.connect(this.music);
-    const filter = c.createBiquadFilter();
-    filter.type = "lowpass";
-    filter.frequency.value = 420;
-    filter.Q.value = 0.7;
-    filter.connect(bus);
-    const lfo = c.createOscillator();
-    lfo.frequency.value = 0.05;
-    const lfoGain = c.createGain();
-    lfoGain.gain.value = 180;
-    lfo.connect(lfoGain);
-    lfoGain.connect(filter.frequency);
-    lfo.start();
-    for (const [f, g, det] of [[55, 0.32, 0], [82.41, 0.18, 4], [110.2, 0.1, -6], [164.8, 0.05, 3]] as const) {
-      const o = c.createOscillator();
-      o.type = f < 100 ? "sine" : "triangle";
-      o.frequency.value = f;
-      o.detune.value = det;
-      const og = c.createGain();
-      og.gain.value = g;
-      o.connect(og);
-      og.connect(filter);
-      o.start();
-    }
-    // Solar wind: very quiet band-passed noise.
-    const n = c.createBufferSource();
-    n.buffer = this.noise;
-    n.loop = true;
-    const bp = c.createBiquadFilter();
-    bp.type = "bandpass";
-    bp.frequency.value = 700;
-    bp.Q.value = 0.6;
-    const ng = c.createGain();
-    ng.gain.value = 0.025;
-    n.connect(bp);
-    bp.connect(ng);
-    ng.connect(bus);
-    n.start();
+  /** The only background music: sparse bell notes, no continuous bed. */
+  private startMusic() {
+    if (!this.ctx || this.musicStarted || !this.music) return;
+    this.musicStarted = true;
     this.scheduleBell();
   }
 
